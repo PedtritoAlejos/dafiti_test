@@ -251,6 +251,13 @@ select id_equipos,
 from EQUIPO.equipos e 
 where nombre = 'chacarita'
 
+5. Necesitamos tener registro de los jugadores que hacen cada gol en los partidos,
+¿cómo lo harías?
 
+Una tabla intermedia que almacene los goles realizados por el jugador en el partido, la tabla debe contener los siguientes campos:
+
+id_partido,
+id_jugador,
+cantidad_gol
     
 ```
