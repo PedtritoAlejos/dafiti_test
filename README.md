@@ -8,7 +8,7 @@ que quede solo un commit con los cambios.
 #### Respuesta : En el caso de no haber realizado un push, ocuparía el comando "git commit --amend --no-edit"
 
 
-```
+```bash
 pealejosb@MacBook-Pro-de-pealejosb dafiti_test % git add archivo_olvidado.js 
 pealejosb@MacBook-Pro-de-pealejosb dafiti_test % git commit --amend --no-edit
 [main 66d8043] commit inicial
@@ -16,7 +16,8 @@ pealejosb@MacBook-Pro-de-pealejosb dafiti_test % git commit --amend --no-edit
 ```
 
 En el caso de haber realizado un push, ocuparía el el comando mencionado + un push forzado 
-```
+
+```bash
 pealejosb@MacBook-Pro-de-pealejosb dafiti_test % git push -f origin main       
 Enumerando objetos: 7, listo.
 Contando objetos: 100% (7/7), listo.
@@ -30,3 +31,130 @@ pealejosb@MacBook-Pro-de-pealejosb dafiti_test %
 
 ```
 
+2. Si has trabajado con control de versiones ¿Cuál/es han sido los flujos con los que
+has trabajado? ¿Cuál ha sido la situación más compleja que has tenido con esto?
+
+#### Respuesta : He trabajado con el flujo llamado "GitHubFlow", no me he encontrado con situaciones complejas, los equipos eran de 2 a 3 personas, según mi experiencia lo recomiendo para equipos pequeños con features diarias.
+
+3. ¿Qué experiencia has tenido con microservicios?
+
+#### Respuesta: No tengo experiencia con microservicios
+
+4. ¿Cuál es tu servicio favorito de AWS? ¿Por qué?
+### Respuesta: No cuento con experiencia en AWS.
+
+## Ejercicio (en el lenguaje que más te acomode)
+Escribir una función que determine si un conjunto de cartas de una lista representan una
+escalera de poker (5 cartas con valores consecutivos) o no.
+Las cartas siempre tienen valores entre 2 y 14, donde 14 es el AS.
+Tener en cuenta que el AS también cuenta como 1.
+La cantidad de cartas puede variar, pero nunca es superior a 7.
+Ejemplos:
+escalera: 14-2-3-4-5
+escalera: 9-10-11-12-13
+escalera: 2-7-8-5-10-9-11
+no es escalera: 7-8-12-13-14
+
+```javascript
+function getConsecutiveNumber (list) {
+
+    return list.reduce( (acc,value,index,array) =>{
+
+            acc['count'] = ( (acc['value'] + 1 ) === value  ) ? (acc['count'] + 1 ) : acc['count']
+            acc['count'] = ( index === (array.length -1) && (value - 1) == acc['value']  ) ? (acc['count'] + 1 ) :  acc['count']
+            
+            acc['value'] = value
+        
+            return acc
+            
+        },{'count':0});
+}
+function isStraight (list) {
+
+   if(list >7 || list <5){
+       return false
+   }
+
+   list = list.map( (value) =>  (value === 14) ? 1 : value );
+   list = list.sort( (a,b) => a -b );
+   
+   let listCard = getConsecutiveNumber(list);
+
+   return ( listCard.count >= 5 )
+    
+
+}
+module.exports = isStraight
+
+```
+
+El archivo de prueabas unitarias ( con el framework JEST)
+
+```javascript
+const isStraight = require("../src/poker");
+
+
+describe('TEST_ESCALERA_POKER_VALIDO', () =>{
+    
+    test('14-2-3-4-5',() =>{
+        expect(isStraight([14,2,3,4,5])).toBe(true)
+    });
+    test('9-10-11-12-13', ()=>{
+        expect( isStraight([9,10,11,12,13])).toBe(true)
+    })
+    test('2-7-8-5-10-9-11', () =>{
+        expect( isStraight([2,7,8,5,10,9,11]) ).toBe(true)
+    })
+    test('7-8-12-13-14', () =>{
+        expect( isStraight([7,8,12,13,14]) ).toBe(false)
+    })
+
+    test('2,3,4,5,6', () =>{
+        expect( isStraight([ 2,3,4,5,6 ])).toBe(true)
+    })
+    test('14,5,4,2,3', () =>{
+        expect( isStraight([ 14,5,4,2,3 ])).toBe(true)
+    })
+    test('2,3,4,5,6', () =>{
+        expect( isStraight([ 2,3,4,5,6 ])).toBe(true)
+    })
+    test('7,7,12,11,3,4,14', () =>{
+        expect( isStraight([ 7,7,12,11,3,4,14 ])).toBe(false)
+    })
+    test('7,3,2', () =>{
+        expect( isStraight([ 7,3,2 ])).toBe(false)
+    })
+
+});
+
+
+```
+
+Al ejecutar las pruebas con jest, el resultado es el deseado :
+
+```bash
+pealejosb@MacBook-Pro-de-pealejosb dafiti_test % npm test
+
+> dafiti_test@1.0.0 test /Users/pealejosb/Documents/PERSONAL/REPOSITORIOS/dafiti_test
+> jest
+
+ PASS  __test__/poker.test.js
+  TEST_ESCALERA_POKER_VALIDO
+    ✓ 14-2-3-4-5 (2 ms)
+    ✓ 9-10-11-12-13
+    ✓ 2-7-8-5-10-9-11
+    ✓ 7-8-12-13-14
+    ✓ 2,3,4,5,6
+    ✓ 14,5,4,2,3
+    ✓ 2,3,4,5,6
+    ✓ 7,7,12,11,3,4,14
+    ✓ 7,3,2 (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       9 passed, 9 total
+Snapshots:   0 total
+Time:        0.337 s, estimated 1 s
+Ran all test suites.
+pealejosb@MacBook-Pro-de-pealejosb dafiti_test % 
+
+```
