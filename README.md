@@ -158,3 +158,99 @@ Ran all test suites.
 pealejosb@MacBook-Pro-de-pealejosb dafiti_test % 
 
 ```
+
+```
+SELECT id_jugadores, fk_equipos, nombre, fecha_nacimiento
+FROM EQUIPO.jugadores;
+
+
+
+
+/* JUGADOR MAS VIEJO DE CADA EQUIPO */
+
+select j.id_jugadores ,j.nombre, j.fecha_nacimiento 
+FROM EQUIPO.jugadores j 
+INNER JOIN 
+(
+    SELECT  fk_equipos,  min(fecha_nacimiento) as oldDate
+    FROM EQUIPO.jugadores 
+    GROUP BY fk_equipos
+)
+j2 ON j2.fk_equipos  = j.fk_equipos AND j.fecha_nacimiento  = j2.oldDate
+ORDER BY j.id_jugadores 
+
+
+    
+
+
+
+/* CUANTAS PARTIDOS JUGO DE VISITANTE CADA EQUIPO */
+
+SELECT  e.nombre ,e.id_equipos ,IFNULL( p.cantidad_visitante,0) as cantidad_visitante
+FROM EQUIPO.equipos e 
+LEFT JOIN 
+(
+select  fk_equipo_visitante as id_equipo,
+        count( p.fk_equipo_visitante ) as cantidad_visitante
+from EQUIPO.partidos p 
+group by p.fk_equipo_visitante 
+) p ON e.id_equipos  = p.id_equipo
+
+
+/*¿Qué equipos jugaron el 01/01/2016 y el 12/02/2016?*/
+
+select p.fecha_partido, 
+(select nombre from equipos e2 where e2.id_equipos = fk_equipo_local ) as nombre_equipo_local,
+(select nombre from equipos e2 where e2.id_equipos = fk_equipo_visitante ) as nombre_equipo_visitante
+from partidos p 
+where p.fecha_partido  in ('2016-01-01','2016-02-12')
+
+
+/* Diga el total de goles que hizo el equipo “Chacarita” en su historia (como local o
+visitante)  */
+
+
+select id_equipos, 
+        nombre,
+        (
+        SELECT  sum(p.goles_local) as total_goles_local
+        FROM EQUIPO.partidos p
+        where p.fk_equipo_local  = id_equipos
+        GROUP by p.fk_equipo_local
+        
+        )as total_goles_local,
+        (
+        SELECT  sum(p.goles_visitante) as total_goles_visitante
+        FROM EQUIPO.partidos p
+        where p.fk_equipo_visitante = id_equipos
+        GROUP by p.fk_equipo_visitante 
+        
+        )as total_goles_visitante,
+        
+        (
+        
+         (
+            SELECT  sum(p.goles_local) as total_goles_local
+            FROM EQUIPO.partidos p
+            where p.fk_equipo_local  = id_equipos
+            GROUP by p.fk_equipo_local
+        
+        ) +
+        (
+        
+            SELECT  sum(p.goles_visitante) as total_goles_visitante
+            FROM EQUIPO.partidos p
+            where p.fk_equipo_visitante = id_equipos
+            GROUP by p.fk_equipo_visitante 
+        )
+        
+        
+        ) as total_goles
+        
+        
+from EQUIPO.equipos e 
+where nombre = 'chacarita'
+
+
+    
+```
