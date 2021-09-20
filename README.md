@@ -159,16 +159,15 @@ pealejosb@MacBook-Pro-de-pealejosb dafiti_test %
 
 ```
 
-```
-SELECT id_jugadores, fk_equipos, nombre, fecha_nacimiento
-FROM EQUIPO.jugadores;
+## Escribir las queries para:
+#### 1. ¿Cuál es el jugador más viejo de cada equipo?
 
-
-
+```sql
 
 /* JUGADOR MAS VIEJO DE CADA EQUIPO */
 
-select j.id_jugadores ,j.nombre, j.fecha_nacimiento 
+
+select  e.nombre as nombre_equipo ,j.nombre as nombre_jugador, j.fecha_nacimiento 
 FROM EQUIPO.jugadores j 
 INNER JOIN 
 (
@@ -177,16 +176,28 @@ INNER JOIN
     GROUP BY fk_equipos
 )
 j2 ON j2.fk_equipos  = j.fk_equipos AND j.fecha_nacimiento  = j2.oldDate
+INNER JOIN EQUIPO.equipos e ON e.id_equipos  = j.fk_equipos 
 ORDER BY j.id_jugadores 
 
 
+```
+Resultado :
+```bash
+nombre_equipo|nombre_jugador|fecha_nacimiento   |
+-------------|--------------|-------------------|
+colo-colo    |vegeta        |1990-08-31 00:00:00|
+concepcion   |cooler        |1990-08-31 00:00:00|
+```
+
     
+#### 2. ¿Cuántos partidos jugó de visitante cada equipo? (nota: hay equipos no jugaron
+ningún partido)
 
+```sql
 
+/* CUANTAS PARTIDOS JUGÓ DE VISITANTE CADA EQUIPO */
 
-/* CUANTAS PARTIDOS JUGO DE VISITANTE CADA EQUIPO */
-
-SELECT  e.nombre ,e.id_equipos ,IFNULL( p.cantidad_visitante,0) as cantidad_visitante
+SELECT  e.id_equipos ,e.nombre ,IFNULL( p.cantidad_visitante,0) as cantidad_visitante
 FROM EQUIPO.equipos e 
 LEFT JOIN 
 (
@@ -196,7 +207,20 @@ from EQUIPO.partidos p
 group by p.fk_equipo_visitante 
 ) p ON e.id_equipos  = p.id_equipo
 
+```
+Resultado :
+```
+id_equipos|nombre    |cantidad_visitante|
+----------|----------|------------------|
+         1|colo-colo |                 2|
+         2|concepcion|                 5|
+         3|valdivia  |                 0|
+         4|chacarita |                 1|
+```
 
+#### 3. ¿Qué equipos jugaron el 01/01/2016 y el 12/02/2016?
+
+```sql
 /*¿Qué equipos jugaron el 01/01/2016 y el 12/02/2016?*/
 
 select p.fecha_partido, 
@@ -205,6 +229,19 @@ select p.fecha_partido,
 from partidos p 
 where p.fecha_partido  in ('2016-01-01','2016-02-12')
 
+```
+
+Resultado :
+```bash
+fecha_partido      |nombre_equipo_local|nombre_equipo_visitante|
+-------------------|-------------------|-----------------------|
+2016-01-01 00:00:00|valdivia           |concepcion             |
+2016-02-12 00:00:00|colo-colo          |concepcion             |
+```
+
+#### 4. Diga el total de goles que hizo el equipo “Chacarita” en su historia (como local o visitante)
+
+```sql
 
 /* Diga el total de goles que hizo el equipo “Chacarita” en su historia (como local o
 visitante)  */
@@ -250,14 +287,22 @@ select id_equipos,
         
 from EQUIPO.equipos e 
 where nombre = 'chacarita'
+```
+Resultado :
 
-5. Necesitamos tener registro de los jugadores que hacen cada gol en los partidos,
+```bash
+id_equipos|nombre   |total_goles_local|total_goles_visitante|total_goles|
+----------|---------|-----------------|---------------------|-----------|
+         4|chacarita|               14|                   10|         24|
+```
+
+#### 5. Necesitamos tener registro de los jugadores que hacen cada gol en los partidos,
 ¿cómo lo harías?
-
+```
 Una tabla intermedia que almacene los goles realizados por el jugador en el partido, la tabla debe contener los siguientes campos:
 
-id_partido,
-id_jugador,
+fk_partido,
+fk_jugador,
 cantidad_gol
     
 ```
