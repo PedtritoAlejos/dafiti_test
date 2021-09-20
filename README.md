@@ -160,6 +160,7 @@ pealejosb@MacBook-Pro-de-pealejosb dafiti_test %
 ```
 
 ## Escribir las queries para:
+![Modelo DB](https://github.com/PedtritoAlejos/dafiti_test/blob/main/DB-EQUIPO.jpg)
 #### 1. ¿Cuál es el jugador más viejo de cada equipo?
 
 ```sql
