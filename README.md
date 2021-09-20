@@ -41,7 +41,7 @@ has trabajado? ¿Cuál ha sido la situación más compleja que has tenido con es
 #### Respuesta: No tengo experiencia con microservicios
 
 4. ¿Cuál es tu servicio favorito de AWS? ¿Por qué?
-### Respuesta: No cuento con experiencia en AWS.
+#### Respuesta: No cuento con experiencia en AWS.
 
 ## Ejercicio (en el lenguaje que más te acomode)
 Escribir una función que determine si un conjunto de cartas de una lista representan una
@@ -299,10 +299,28 @@ id_equipos|nombre   |total_goles_local|total_goles_visitante|total_goles|
 #### 5. Necesitamos tener registro de los jugadores que hacen cada gol en los partidos,
 ¿cómo lo harías?
 ```
-Una tabla intermedia que almacene los goles realizados por el jugador en el partido, la tabla debe contener los siguientes campos:
+Una tabla intermedia que almacene los goles realizados por el jugador en el partido, la tabla debe contener los siguientes campos: (a través del campo fk_jugador se puede conocer el equipo)
 
 fk_partido,
 fk_jugador,
 cantidad_gol
     
+```
+```sql
+CREATE TABLE goles_partido (
+fk_partido int NOT NULL,
+fk_jugador int NOT NULL,
+cantidad_gol int NOT NULL,
+
+FOREIGN KEY (fk_partido) REFERENCES partidos (id_partidos),
+FOREIGN KEY (fk_jugador) REFERENCES jugadores (id_jugadores)
+
+)
+```
+Al insertar algunos datos el campo quedaría así:
+```
+fk_partido|fk_jugador|cantidad_gol|
+----------|----------|------------|
+         1|         1|           2|
+         1|         4|           1|
 ```
